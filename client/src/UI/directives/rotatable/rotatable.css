@@ -1,0 +1,31 @@
+.rotatable {
+  position: relative;
+}
+
+.rotator {
+  position: absolute;
+  cursor: grab;
+
+  height: 28px;
+  width: 28px;
+
+  /* top: -40px; */
+  top: 2px;
+  left:0;
+  right:0;
+  margin-left: auto;
+  margin-right: auto;
+
+  /* some extra meat for easier element hiting */
+  padding: 0px;
+}
+
+.rotator:active {
+  cursor: grabbing;
+}
+
+.rotatable:is(:hover, :active) .rotator {
+  background-image: url("~/assets/rotate-icon.svg");
+  transform: rotate(45deg);
+  filter: invert(100%);
+}

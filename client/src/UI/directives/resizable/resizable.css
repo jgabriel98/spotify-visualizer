@@ -1,0 +1,27 @@
+.resizable {
+  position: relative;
+}
+
+.resizer {
+  /* background: url("~/assets/resize-icon-gray.png");
+  background-size: cover; */
+  position: absolute;
+  /* background: blue; */
+  cursor: se-resize;
+  height: 16px;
+  width: 16px;
+  
+  right: 0;
+  bottom: 0;
+  /* some extra meat for easier element hiting */
+  padding-left: 8px;
+  padding-top: 8px;
+}
+
+.resizer:is(:hover, :active) {
+  background: url("~/assets/resize-icon-gray.png");
+  background-size: 16px;
+  background-repeat: no-repeat;
+  background-position: bottom right;
+  background-clip: content-box;
+}

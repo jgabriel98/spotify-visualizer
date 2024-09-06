@@ -1,0 +1,33 @@
+.trackVisualizer {
+  /* bottom: 0;
+  left: 0; */
+  user-select: none;
+  position: absolute;
+  z-index: 5;
+
+  flex-direction: column;
+
+  background: rgba(0,0,0,0.2);
+  color: whitesmoke;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  padding: 16px;
+}
+
+.trackVisualizer img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  -webkit-user-drag: none;
+}
+
+.trackDescription {
+  resize: horizontal;
+  height: auto;
+  container-type: inline-size; /* defines the element as a container */
+}
+
+.trackVisualizer .trackDescription div {
+  font-size: 4.5cqw; /* fallback for unsupported browsers */
+  font-size: clamp(12px, 4.5cqw, 32px); /* minimum 8px, based on 4.5cqw, maximum 22px */
+}

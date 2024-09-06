@@ -1,0 +1,8 @@
+.audiobarVisualizer-container {
+  position: absolute;
+}
+
+.audiobarVisualizer {
+  width: 100%;
+  height: 100%;
+}

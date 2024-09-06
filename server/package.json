@@ -1,0 +1,40 @@
+{
+  "name": "spotify-visualizer",
+  "version": "1.0.0",
+  "description": "spotify visualizer server",
+  "main": "src/index.ts",
+  "clientPath": "../client",
+  "scripts": {
+    "dev:client": "cd ../client && NODE_ENV=development npm run build:watch",
+    "dev:server": "NODE_ENV=development nodemon ./src/index.ts",
+    "dev": "concurrently --kill-others 'npm:dev:server' 'npm:dev:client'",
+    "prod": "node dist/index.js",
+    "build:client": "(cd ../client && npm run build) && cp -r ../client/dist ./dist/client",
+    "build:server": "npx tsc",
+    "build": "rm -r ./dist && concurrently 'npm:build:server' 'npm:build:client' && cp -r ./cert ./dist/cert",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "João Gabriel Silva Fernandes",
+  "license": "MIT",
+  "dependencies": {
+    "@distube/ytdl-core": "^4.14.4",
+    "body-parser": "^1.20.2",
+    "chalk": "^4.1.2",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "memoize": "^10.0.0",
+    "socket.io": "^4.7.5",
+    "youtube-sr": "^4.3.11"
+  },
+  "devDependencies": {
+    "@tsconfig/node18": "^18.2.4",
+    "@types/cors": "^2.8.17",
+    "@types/events": "^3.0.3",
+    "@types/express": "^4.17.21",
+    "@types/node": "^18.19.40",
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3"
+  }
+}
