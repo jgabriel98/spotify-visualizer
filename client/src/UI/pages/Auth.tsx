@@ -5,6 +5,7 @@ import { createComputed, createEffect, createSignal, onCleanup, onMount } from "
 import { getStoredAuthToken, handleNewSpotifyAuthorizationCode } from "~/lib/spotify-auth";
 import { buildRequestUserAuthorizationURL } from "~/lib/spotify-auth/service-api";
 import { getUrlSearchParams } from "~/utils/fetch";
+import './Auth.css';
 
 const wsEndpoint = `${location.protocol}//${location.hostname}:${import.meta.env.VITE_SERVER_PORT}`
 const webSocket = io(wsEndpoint, { autoConnect: false });
@@ -52,13 +53,15 @@ export function Auth() {
 
   onCleanup(() => webSocket.disconnect());
 
-  const onLocalAuth = () => webSocket.emit('qrCodeAuth:abort', authState());
+  // const onLocalAuth = () => webSocket.emit('qrCodeAuth:abort', authState());
 
-  return <div style={{ "flex-direction": 'column' }}>
+  return <div class="QRCodeContainer">
+    Scan the QR code to authenticate your Spotify account
+    
     <canvas ref={QRCodeCanvasRef} />
-    <button onClick={onLocalAuth}>
-      entrar manualmente
-    </button>
+    {/* <button onClick={onLocalAuth}>
+      authenticate mannualy
+    </button> */}
   </div>
 }
 
@@ -73,15 +76,15 @@ export function ExternalAuth() {
     window.alert(message)
   });
 
-  setInterval(() => setCountDown(prev => prev-1000), 1000);
+  setInterval(() => setCountDown(prev => prev - 1000), 1000);
 
   createEffect(() => {
-    if(countDown() <= 0) window.close();
+    if (countDown() <= 0) window.close();
   })
 
 
   return <>
     <div>All good! you can close this tab now</div>
-    <div>(it will close itself in {countDown()/1000} seconds)</div>
+    <div>(it will close itself in {countDown() / 1000} seconds)</div>
   </>
 }
