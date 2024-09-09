@@ -1,3 +1,18 @@
+A Web Application to visualize the spotify currently playing track on a projector (or some big screen), without requiring you to change which spotify device is playing.
+
+Designed to bo used as a visual decoration.
+
+# Features
+ - *No "stealing" your spotify connect*. (running this won't interact with or affect your spotify playback in anyway)
+ - Persisted UI layout;
+ - Synched realtime UI layout editing;
+ - Dragabble, rotatable and resizable UI components;
+
+
+
+
+--------------------------------
+
 ## Requirements
  - Spotify developer account
  - Node 18
