@@ -15,10 +15,9 @@ A Web Application to visualize the spotify currently playing track on a projecto
  - Dragabble, rotatable and resizable UI components;
 
 
+https://github.com/user-attachments/assets/5846f073-9f94-40ef-85a3-ab2fef349be2
 
 
-
-<video src="https://github.com/user-attachments/assets/5846f073-9f94-40ef-85a3-ab2fef349be2" />
 
 
 
