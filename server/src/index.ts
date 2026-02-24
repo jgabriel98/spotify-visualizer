@@ -1,15 +1,14 @@
 import bodyParser from 'body-parser';
+import chalk from 'chalk';
 import cors from 'cors';
 import express from 'express';
 import fs from 'node:fs';
-import http from 'node:http';
 import https from 'node:https';
 import path from 'node:path';
 import { Server } from "socket.io";
 import routes from './routes';
 import registerStateHandlers from './sockets/persisted-state';
 import registerSpotifyAuthHandlers from './sockets/qrcode-auth';
-import chalk from 'chalk';
 
 const isDevMode = process.env.NODE_ENV === "development"
 const __clientdir = isDevMode
@@ -19,9 +18,9 @@ const __clientdir = isDevMode
 const app = express();
 if(isDevMode) app.use(cors());
 
-const server = isDevMode ? http.createServer(app) : https.createServer({
-  key: fs.readFileSync(path.join(__dirname,'./cert/key.pem')),
-  cert: fs.readFileSync(path.join(__dirname,'./cert/cert.pem'))
+const server = https.createServer({
+  key: fs.readFileSync(isDevMode ? './cert/key.pem' : path.join(__dirname,'./cert/key.pem')),
+  cert: fs.readFileSync(isDevMode ? './cert/cert.pem' :path.join(__dirname,'./cert/cert.pem'))
 }, app);
 
 const io = new Server(server, {

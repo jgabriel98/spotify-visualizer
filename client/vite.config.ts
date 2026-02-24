@@ -4,18 +4,25 @@ import { defineConfig } from 'vite';
 import { comlink } from "vite-plugin-comlink";
 import solid from 'vite-plugin-solid';
 
-export default defineConfig({
-  plugins: [
-    comlink(),
-    solid(),
-    basicSsl()
-  ],
-  resolve:{
-    alias: {
-      "~": path.resolve(__dirname, "./src")
+
+
+export default defineConfig(({mode}) => {
+  return {
+    plugins: [
+      comlink(),
+      solid(),
+      basicSsl()
+    ],
+    resolve: {
+      alias: {
+        "~": path.resolve(__dirname, "./src")
+      }
+    },
+    worker: {
+      plugins: () => [comlink()],
+    },
+    build: {
+      sourcemap: mode === 'development' ? true : false,
     }
-  },
-  worker: {
-    plugins: () => [comlink()],
   }
 })
