@@ -68,11 +68,12 @@ You'll need to clear the browser `localstorage`
 
 Most modern browsers require a initial user interaction to access audio nodes, to solve this you can do one of these: 
  - change the `Autoplay policy` (at [`chrome://flags/#autoplay-policy`](chrome://flags/#autoplay-policy) ) to _'No user gesture is required'_
+ - press f5 and quicly click anywhere on the website
 
  ## TODO:
   - [ ] fixed resolution: pick a single canvas resolution, thus solving the problem of editing the layout in different screens with different resolutions)
+  - [ ] Add a friendly way to "logout" from connected spotify account
   - Styling:
     - [ ] add background options (instead of only black)
     - [ ] make soundwaves animation optional
     - [ ] add progress bar
- - press f5 and quicly click anywhere on the website
