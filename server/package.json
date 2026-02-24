@@ -11,20 +11,20 @@
     "prod": "node dist/index.js",
     "build:client": "(cd ../client && npm run build) && cp -r ../client/dist ./dist/client",
     "build:server": "npx tsc",
-    "build": "rm -r ./dist && concurrently 'npm:build:server' 'npm:build:client' && cp -r ./cert ./dist/cert",
+    "build": "rm -rf ./dist && concurrently 'npm:build:server' 'npm:build:client' && cp -r ./cert ./dist/cert",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "João Gabriel Silva Fernandes",
   "license": "MIT",
   "dependencies": {
-    "@distube/ytdl-core": "^4.14.4",
     "body-parser": "^1.20.2",
     "chalk": "^4.1.2",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "memoize": "^10.0.0",
     "socket.io": "^4.7.5",
-    "youtube-sr": "^4.3.11"
+    "youtube-sr": "^4.3.11",
+    "ytdlp-nodejs": "^3.4.4"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.4",

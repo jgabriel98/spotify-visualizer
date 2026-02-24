@@ -1,10 +1,12 @@
-import ytdl from "@distube/ytdl-core";
-import fs from "fs";
-import YouTube, { Video } from 'youtube-sr';
-import { TrackData } from "../models";
 import chalk from "chalk";
+import fs from "fs";
+import YouTube, { type Video } from 'youtube-sr';
+import { YtDlp } from "ytdlp-nodejs";
+import { TrackData } from "../models";
 
 const CACHE_DIR = './cache/tracks'
+
+const ytdlp = new YtDlp();
 
 if (!fs.existsSync(CACHE_DIR)) {
   fs.mkdirSync(CACHE_DIR, { recursive: true });
@@ -23,37 +25,24 @@ export async function getTrackAudio(track: TrackData) {
     const path = `${CACHE_DIR}/${track_id}.mp3`;
     if (fs.existsSync(path)) return resolve(path);
 
-    //RETORNA CHUNKS DA STREAM: ytdl(url).asIndexedPairs
-    const stream = ytdl(yt_url, {
-      quality: 'lowest',
-      filter: 'audioonly'
-    });
-
     const output = fs.createWriteStream(path);
+    const timediff = { start: -1, finish: -1 };
 
-    const startTime = Date.now();
-    stream.on("end", () => {
-      const downloadTime = (Date.now() - startTime) / 1000;
-      console.log(chalk.gray(
-        `Took ${downloadTime}s to download track: ${track.track_name}`
-      ));
-    });
-    stream.on('error', (err) => reject(err));
-    output.once('close', () => {
-      resolve(path);
-    });
+    ytdlp
+      .stream(yt_url)
+      .format({ filter: 'audioonly', type: 'mp3' })
+      .on('start', () => timediff.start = Date.now())
+      .on('end', () => {
+        timediff.finish = Date.now();
+        const downloadTime = (timediff.finish - timediff.start) / 1000;
+        console.log(chalk.gray(
+          `Took ${downloadTime}s to download track: ${track.track_name}`
+        ));
+      })
+      .on('error', (err) => reject(err))
+      .pipe(output);
 
-    // how to save stream into buffer and cache it
-    // const chunks = []
-    // stream.on('data', (chunk) => {
-    //   chunks.push(chunk)
-    // })
-    // stream.on('end', () => {
-    //   
-    //   cacheTrack(trackId, Buffer.concat(chunks))
-    // })
-
-    stream.pipe(output);
+    output.on('close', () => resolve(path));
   });
 
   return promise;
