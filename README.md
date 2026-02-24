@@ -77,3 +77,4 @@ Most modern browsers require a initial user interaction to access audio nodes, t
     - [ ] add background options (instead of only black)
     - [ ] make soundwaves animation optional
     - [ ] add progress bar
+ - Migrate architecture to `solid-start` fullstack framework, having server and client more integrated
