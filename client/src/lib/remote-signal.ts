@@ -1,15 +1,15 @@
 import { io } from "socket.io-client";
-import { createComputed, createSignal, onCleanup, Signal } from "solid-js";
+import { createComputed, createSignal, Signal } from "solid-js";
 import { leadingAndTrailing, throttle } from "@solid-primitives/scheduled";
 
-const wsEndpoint = `${location.protocol}//${location.hostname}:${import.meta.env.VITE_SERVER_PORT}`
-const webSocket = io(wsEndpoint, {autoConnect: true});
+const wsEndpoint = new URL(`${window.location.protocol}//${location.hostname}`);
+wsEndpoint.port = import.meta.env.VITE_SERVER_PORT ?? '';
+const webSocket = io(wsEndpoint.toString(), { autoConnect: true, closeOnBeforeunload: true });
 
 export default function createRemoteSignal<T>(key: string, fallbackValue: T): Signal<T>;
 export default function createRemoteSignal<T>(key: string): Signal<T | undefined>;
 
 export default function createRemoteSignal<T>(key: string, fallbackValue?: T) {
-  onCleanup(() => webSocket.disconnect());
 
   let lastSignalChangeSource: 'local' | 'external' = 'local';
   const [value, _setValue] = createSignal(fallbackValue)
@@ -38,7 +38,7 @@ export default function createRemoteSignal<T>(key: string, fallbackValue?: T) {
     if (!joinedStateRoom()) return;
 
     if (lastSignalChangeSource === 'local') {
-      throttledEmit({key, value: _value});
+      throttledEmit({ key, value: _value });
     }
   })
 

@@ -5,8 +5,13 @@ import { generateRandomString, generateSecureCodeChallenge } from "./helpers";
 
 const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
 
+const AUTH_CALLBACK_URL = new URL(`${window.location.protocol}//${import.meta.env.VITE_SPOTIFY_AUTH_CALLBACK_HOST}`);
+AUTH_CALLBACK_URL.port = import.meta.env.VITE_SERVER_PORT ?? '';
+AUTH_CALLBACK_URL.pathname = '/auth';
+
+/** runs on external device, after user scans QR code and authorizes app on spotify's website  */
 export async function buildRequestUserAuthorizationURL(searchParams?: Record<string, string>) {
-  const redirectUri = new URL(`${window.location.origin}/auth`)
+  const redirectUri = new URL(AUTH_CALLBACK_URL)
   if (searchParams) redirectUri.search = new URLSearchParams(searchParams).toString();
 
   const authEndpoint = new URL("https://accounts.spotify.com/authorize");
@@ -30,13 +35,6 @@ export async function buildRequestUserAuthorizationURL(searchParams?: Record<str
   return authEndpoint;
 }
 
-export async function redirectToRequestUserAuthorization() {
-  const authEndpoint = buildRequestUserAuthorizationURL();
-  window.location.href = authEndpoint.toString();
-  // blocks code execution until redirect finishes
-  return await new Promise<any>(() => { })
-}
-
 /** Fetch user authorization */
 export async function fetchAuthToken(clientId: string, code: string) {
   const codeVerifier = getLocalStorage<string>('code_verifier');
@@ -45,7 +43,7 @@ export async function fetchAuthToken(clientId: string, code: string) {
   params.append('client_id', clientId);
   params.append('grant_type', 'authorization_code');
   params.append('code', code);
-  params.append('redirect_uri', `${location.origin}${location.pathname}`);
+  params.append('redirect_uri', AUTH_CALLBACK_URL.toString());
   params.append('code_verifier', codeVerifier!);
 
   const response = await fetch("https://accounts.spotify.com/api/token", {

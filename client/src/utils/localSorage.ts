@@ -1,4 +1,8 @@
 export function setLocalStorage<T>(key: string, value: T) {
+  if (value === undefined) {
+    localStorage.removeItem(key);
+    return;
+  }
   localStorage.setItem(key, JSON.stringify(value))
 }
 

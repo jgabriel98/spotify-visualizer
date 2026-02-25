@@ -13,7 +13,7 @@ function registerSpotifyAuthHandlers(io: Server, socket: Socket) {
   });
 
   socket.on('qrCodeAuth:abort', (authState: string, callback) => {
-    console.log(chalk.yellow('qrCodeAuth:abort :'), chalk.gray(authState))
+    console.log(chalk.yellowBright('qrCodeAuth:abort :'), chalk.gray(authState))
     if (authState in ongoingAuthentications) {
       delete ongoingAuthentications[authState];
     } else callback?.({
@@ -22,26 +22,21 @@ function registerSpotifyAuthHandlers(io: Server, socket: Socket) {
     });
   });
 
-  socket.on('qrCodeAuth:authenticated', (authState: string, code: string, callback) => {
-    console.log(chalk.blue('qrCodeAuth:authenticated :'), chalk.gray(authState))
+  // emited by another socket client, after scanning the QR code and receiving the authorization code from Spotify
+  socket.on('qrCodeAuth:externalAuthenticated', async (authState: string, code: string, callback) => {
+    console.log(chalk.blue('qrCodeAuth:externalAuthenticated :'), chalk.gray(authState))
 
     if (authState in ongoingAuthentications) {
+      callback({status: "ok"});
+
       const sourceSocketId = ongoingAuthentications[authState];
       io.to(sourceSocketId).emit('qrCodeAuth:authenticated', code);
+      delete ongoingAuthentications[authState];
+
+      console.log(chalk.greenBright('qrCodeAuth:authenticated :'), chalk.gray(authState));
     } else callback({
       status: "error",
       message: "No ongoing authentication found. Maybe it already completed or was aborted?"
-    });
-  });
-
-  socket.on('qrCodeAuth:complete', (authState: string, callback) => {
-    console.log(chalk.greenBright('qrCodeAuth:complete :'), chalk.gray(authState));
-
-    if (authState in ongoingAuthentications) {
-      delete ongoingAuthentications[authState];
-    } else callback({
-      status: "error",
-      message: "No ongoing authentication found. Maybe it was aborted?"
     });
   });
 

@@ -4,7 +4,8 @@ import { render } from 'solid-js/web'
 import './index.css'
 import App from './UI/pages/App'
 import { Route, Router } from '@solidjs/router'
-import { Auth } from './UI/pages/Auth'
+import { AuthPage } from './UI/pages/Auth'
+import { Settings } from './UI/pages/Settings'
 
 const root = document.getElementById('root')
 
@@ -24,7 +25,8 @@ render(
   () =>
     <Router>
       <Route path='/' component={App} />
-      <Route path='/auth' component={Auth} />
+      <Route path='/auth' component={AuthPage} />
+      <Route path='/settings' component={Settings} />
     </Router>
   , root!
 );

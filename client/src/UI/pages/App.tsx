@@ -36,7 +36,7 @@ function App() {
 
   onMount(async () => {
     const tk = getStoredAuthToken();
-    if (!tk) return navigate('/auth');
+    if (!tk) return navigate('/auth', { replace: true });
 
     setSpotifyApi(new SpotifyApi({
       accessToken: tk.access_token,
