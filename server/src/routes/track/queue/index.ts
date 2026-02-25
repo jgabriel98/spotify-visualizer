@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { getTrackAudio } from '../../../lib/track';
 import { TrackData } from '../../../models';
+import chalk from 'chalk';
 
 const router = Router();
 
@@ -13,6 +14,7 @@ function validateAllTrackFields(t: TrackData) {
 
 type ReqBodyParams = TrackData[];
 
+/** Endpoint for pre downloading audio files */
 router.post<{}, any, ReqBodyParams, never>('/', async (req, res) => {
   const track_list = req.body;
   if (!Array.isArray(track_list)) return res.sendStatus(400);
@@ -21,10 +23,12 @@ router.post<{}, any, ReqBodyParams, never>('/', async (req, res) => {
     const missingField = validateAllTrackFields(t);
     if (missingField) return res.status(400).send(`missing "${missingField}"`);
 
-    let result;
-    try { result = await getTrackAudio(t) } 
-    catch (e) { }
-    if (!result) console.error(`did not find youtubeURL for track ${t.track_id} | ${t.track_name} - ${t.artist_name}`)
+    let videoId: string | null = null;
+    try { videoId = await getTrackAudio(t) }
+    catch (e) { 
+      console.error(chalk.red(`error downloading track ${t.track_id}:`), e);
+    }
+    if (!videoId) console.warn(`could not find youtube video for track ${t.track_id} | ${t.track_name} - ${t.artist_name}`)
   };
 
   return res.sendStatus(202);

@@ -1,12 +1,15 @@
+import { youtube } from '@googleapis/youtube';
 import chalk from "chalk";
 import fs from "fs";
-import YouTube, { type Video } from 'youtube-sr';
+import { Duration } from "luxon";
 import { YtDlp } from "ytdlp-nodejs";
 import { TrackData } from "../models";
 
 const CACHE_DIR = './cache/tracks'
 
 const ytdlp = new YtDlp();
+
+const ytSearch = youtube({ version: 'v3', auth: process.env.YT_SEARCH_API_KEY })
 
 if (!fs.existsSync(CACHE_DIR)) {
   fs.mkdirSync(CACHE_DIR, { recursive: true });
@@ -17,8 +20,8 @@ const trackIdMapTable: {
 } = {}
 
 export async function getTrackAudio(track: TrackData) {
-  const yt_url = await searchYoutubeUrl(track);
-  if (!yt_url) return null;
+  const yt_videoId = await searchYoutubeVideoId(track);
+  if (!yt_videoId) return null;
 
   const { track_id } = track;
   const promise = new Promise<string>((resolve, reject) => {
@@ -29,7 +32,7 @@ export async function getTrackAudio(track: TrackData) {
     const timediff = { start: -1, finish: -1 };
 
     ytdlp
-      .stream(yt_url)
+      .stream(`https://www.youtube.com/watch?v=${yt_videoId}`)
       .format({ filter: 'audioonly', type: 'mp3' })
       .on('start', () => timediff.start = Date.now())
       .on('end', () => {
@@ -49,9 +52,10 @@ export async function getTrackAudio(track: TrackData) {
 }
 
 
-function getByClosestDuration(arr: Video[], targetDuration: number) {
+function getByClosestDuration<T extends { duration: number, id: string }>(arr: T[], targetDuration: number) {
   let closestVal = Math.abs(arr[0].duration - targetDuration);
   let closestIdx = 0;
+
   for (let i = 1; i < arr.length; i++) {
     const diff = Math.abs(arr[i].duration - targetDuration)
     if (diff < closestVal) {
@@ -63,7 +67,7 @@ function getByClosestDuration(arr: Video[], targetDuration: number) {
   return arr[closestIdx];
 }
 
-async function searchYoutubeUrl(req: TrackData) {
+async function searchYoutubeVideoId(req: TrackData) {
   const cachedSearch = trackIdMapTable[req.track_id];
   if (cachedSearch !== undefined) return cachedSearch;
 
@@ -71,12 +75,36 @@ async function searchYoutubeUrl(req: TrackData) {
   const artistQuery = typeof artist_name === 'string' ? artist_name : artist_name[0];
   const searchQuery = `${track_name} ${artistQuery}`
 
-  const searchResults = await YouTube.search(searchQuery, { type: 'video', limit: 10 });
+  // const searchResults = await YouTube.search(searchQuery, { type: 'video', limit: 10 });
+  const _searchResults = await ytSearch.search.list({
+    part: ['id'],
+    fields: 'items/id/videoId',
+    q: searchQuery,
+    type: ['video']
+  })
 
-  const searchMatch = getByClosestDuration(searchResults, track_duration_ms);
-  let searchMatchUrl: string | null = searchMatch.url;
+  if (!_searchResults.data.items || _searchResults.data.items.length === 0) return null;
+
+  const videoIds = _searchResults.data.items
+    .map(v => v.id?.videoId)
+    .filter(id => id !== undefined && id !== null);
+
+  const videoDetails = await ytSearch.videos.list({
+    part: ['id', 'contentDetails'],
+    fields: 'items/id, items/contentDetails/duration',
+    id: videoIds
+  }).then(res => res.data.items?.map(v => ({
+    id: v.id!,
+    duration: Duration.fromISO(v.contentDetails?.duration ?? '').toMillis()
+  })));
+
+  if (!videoDetails || videoDetails.length === 0) return null;
+
+
+  const searchMatch = getByClosestDuration(videoDetails, track_duration_ms);
+  let searchMatchUrl: string | null = searchMatch.id;
   // 3 sec difference --> bad video audio
-  if (Math.abs(searchMatch.duration - track_duration_ms) > 3000)
+  if (isNaN(searchMatch.duration) || Math.abs(searchMatch.duration - track_duration_ms) > 3000)
     searchMatchUrl = null;
 
   trackIdMapTable[req.track_id] = searchMatchUrl;

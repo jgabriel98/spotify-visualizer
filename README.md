@@ -1,4 +1,4 @@
-# WorkInProgress README
+# Spotify Visualizer
 A Web Application to visualize the spotify currently playing track on a projector (or some big screen), without requiring you to change which spotify device is playing.
 
 
@@ -15,10 +15,9 @@ A Web Application to visualize the spotify currently playing track on a projecto
  - Dragabble, rotatable and resizable UI components;
 
 
-https://github.com/user-attachments/assets/5846f073-9f94-40ef-85a3-ab2fef349be2
-
-
-
+<video>
+   <source src="https://github.com/user-attachments/assets/5846f073-9f94-40ef-85a3-ab2fef349be2" />
+</video>
 
 
 
@@ -33,13 +32,21 @@ https://github.com/user-attachments/assets/5846f073-9f94-40ef-85a3-ab2fef349be2
   
    <img width="322" alt="image" src="https://github.com/user-attachments/assets/f91d7913-14fc-40e7-8204-6d8650820c29">
 
-2. Then, for **both** `server/` and `client/` folders:
-   - Edit `.env` file and fill the spotify _Client ID_ and _Client Secret_ variables on it
+   Then on `client/` folder: edit `.env` file and fill the spotify _Client ID_ and _Client Secret_ variables on it
+   ```bash
+   VITE_SPOTIFY_CLIENT_ID="client id goes here"
+   VITE_SPOTIFY_CLIENT_SECRET="client secret goes here"
+   ```
+   _(you can get those values at spotify app settings):_
+
+2. Setup a google API key: [Setting up API keys](https://support.google.com/googleapi/answer/6158862)
+
+   Then on `server/` folder: edit its `.env` file and insert your google API key:
      ```bash
-      VITE_SPOTIFY_CLIENT_ID="client id goes here"
-      VITE_SPOTIFY_CLIENT_SECRET="client secret goes here"
+      YT_SEARCH_API_KEY="Api KEY goes here"
      ```
-     _(you can get those values at spotify app settings):_
+
+3. For **both** `server/` and `client/` folders:
    - run `npm install`
 
 ## Running
@@ -52,12 +59,14 @@ npm run prod
 open https://localhost:3000/
 
 
-### Debugging and dev build
+### Developing and Debugging
 For debugging and local development:
 ```
 cd server
 npm run dev
 ```
+
+open https://localhost:3000/
 
 ## FAQ
 > I want to change the authenticated spotify account

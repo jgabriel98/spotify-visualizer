@@ -1,3 +1,6 @@
+import { configDotenv } from 'dotenv';
+configDotenv();
+
 import bodyParser from 'body-parser';
 import chalk from 'chalk';
 import cors from 'cors';
