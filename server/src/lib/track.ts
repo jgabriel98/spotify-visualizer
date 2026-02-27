@@ -75,7 +75,7 @@ async function searchYoutubeVideoId(req: TrackData) {
   const artistQuery = typeof artist_name === 'string' ? artist_name : artist_name[0];
   const searchQuery = `${track_name} ${artistQuery}`
 
-  // const searchResults = await YouTube.search(searchQuery, { type: 'video', limit: 10 });
+  // TODO: validate if it can be replaced by just yt-dlp cli: `$ yt-dlp "ytsearch:wax wings" --get-title --get-duration --get-id`
   const _searchResults = await ytSearch.search.list({
     part: ['id'],
     fields: 'items/id/videoId',

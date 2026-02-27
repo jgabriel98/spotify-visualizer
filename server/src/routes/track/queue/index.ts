@@ -26,7 +26,7 @@ router.post<{}, any, ReqBodyParams, never>('/', async (req, res) => {
     let videoId: string | null = null;
     try { videoId = await getTrackAudio(t) }
     catch (e) { 
-      console.error(chalk.red(`error downloading track ${t.track_id}:`), e);
+      console.error(chalk.red(`error downloading track ${t.track_name} (${t.track_id}):`), e);
     }
     if (!videoId) console.warn(`could not find youtube video for track ${t.track_id} | ${t.track_name} - ${t.artist_name}`)
   };
