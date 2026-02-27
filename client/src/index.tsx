@@ -5,7 +5,8 @@ import './index.css'
 import App from './UI/pages/App'
 import { Route, Router } from '@solidjs/router'
 import { AuthPage } from './UI/pages/Auth'
-import { Settings } from './UI/pages/Settings'
+import { Settings } from './UI/pages/settings'
+import { SettingsProvider } from './UI/pages/settings/context'
 
 const root = document.getElementById('root')
 
@@ -23,10 +24,12 @@ console.logTime = (...args) => {
 
 render(
   () =>
-    <Router>
-      <Route path='/' component={App} />
-      <Route path='/auth' component={AuthPage} />
-      <Route path='/settings' component={Settings} />
-    </Router>
+    <SettingsProvider>
+      <Router>
+        <Route path='/' component={App} />
+        <Route path='/auth' component={AuthPage} />
+        <Route path='/settings' component={Settings} />
+      </Router>
+    </SettingsProvider>
   , root!
 );

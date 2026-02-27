@@ -1,14 +1,16 @@
 import { DragOptions } from '@neodrag/solid';
 import { useNavigate } from '@solidjs/router';
-import { createComputed, createEffect, createSignal, onCleanup, onMount } from 'solid-js';
+import { createComputed, createEffect, createSignal, Match, onCleanup, onMount, Switch } from 'solid-js';
 import { getStoredAuthToken } from '~/lib/spotify-auth';
 import { startWatcher, stopWatcher } from '~/lib/spotify-playback-listener/playback-status-guesser';
 import SpotifyApi from '~/services/spotify-api';
 import { preFetchTrackStream } from '~/services/track-audio-api';
 import { CurrentlyPlayingTrack } from '~/services/types/spotify-api.interface';
 import AudioVisualizer, { PlaybackState } from '../components/AudioVisualizer/AudioVisualizer';
+import StaticBackground from '../components/StaticBackground/StaticBackground';
 import TrackVisualizer from '../components/TrackVisualizer/TrackVisualizer';
 import './App.css';
+import { useSettings } from './settings/context';
 
 export const defaultDragOptions: DragOptions = {
   bounds: '#container',
@@ -23,7 +25,8 @@ function checkQueueChanged(prev: TrackObject[], next: TrackObject[]) {
 
 function App() {
   const navigate = useNavigate();
-  let audioRef: HTMLAudioElement | undefined;
+  const [settings] = useSettings();
+
   const [spotifyApi, setSpotifyApi] = createSignal<SpotifyApi>();
   const [currentTrack, setCurrentTrack] = createSignal<CurrentlyPlayingTrack | null>(null);
   const [playbackState, setPlaybackState] = createSignal<PlaybackState>({
@@ -62,13 +65,8 @@ function App() {
     preFetchTrackStream(trackQueue());
   })
 
-  const toggleMutte = () => {
-    // if (!audioRef) return;
-    // audioRef.muted = !audioRef.muted
-  }
-
-  return (<>
-    <div id='container' style={{ height: '100%', width: '100%' }} onClick={toggleMutte}>
+  return (
+    <div id='container' style={{ height: '100%', width: '100%' }}>
       {/* 
       --autoplay-policy=no-user-gesture-required 
       https://stackoverflow.com/questions/49921453/how-to-allow-video-autoplay-in-a-google-chrome-kiosk-app-in-version-66-or-later
@@ -76,11 +74,19 @@ function App() {
 
       chrome://flags/#Insecure-origins-treated-as-secure
       */}
-      <audio ref={audioRef} hidden muted />
+      
       <TrackVisualizer playingTrack={currentTrack()} />
-      <AudioVisualizer mediaRef={audioRef!} playingTrack={currentTrack()} playbackState={playbackState()} />
+
+      <Switch>
+        <Match when={settings().background === "audioBars"}>
+          <AudioVisualizer playingTrack={currentTrack()} playbackState={playbackState()} />
+        </Match>
+        <Match when={settings().background === "accentColor"}>
+          <StaticBackground playingTrack={currentTrack()} />
+        </Match>
+      </Switch>
     </div>
-  </>)
+  )
 }
 
 export default App

@@ -13,7 +13,6 @@ export type PlaybackState = {
 }
 
 interface AudioVisualizerProps {
-  mediaRef: HTMLMediaElement;
   playingTrack: CurrentlyPlayingTrack | null;
   playbackState: PlaybackState;
 }
@@ -26,7 +25,8 @@ const makeRedish = (color: Swatch) => {
 }
 
 
-function AudioVisualizer(props: AudioVisualizerProps) {
+function AudioVisualizer(props: AudioVisualizerProps) { 
+  let audioRef: HTMLAudioElement = undefined!;
   const [accentColor, setAccentColor] = createSignal<string | string[]>();
 
   createEffect((prevTrackId) => {
@@ -43,19 +43,19 @@ function AudioVisualizer(props: AudioVisualizerProps) {
   })
 
   createEffect(() => {
-    if (!props.playingTrack) return;
+    if (!props.playingTrack || !audioRef) return;
     getTrackStream(props.playingTrack.item)
       .then(mediaBlob => {
         // mutes to don't mess with visuals (don't show wrong visuals)
 
         const audioUrl = URL.createObjectURL(mediaBlob);
-        props.mediaRef.src = audioUrl;
+        audioRef.src = audioUrl;
 
         // re-updates progress because audio source just changed
         // props.mediaRef.currentTime = props.playbackState.progress_ms! / 1000;
-        props.mediaRef.currentTime = 0;
-        props.mediaRef.play();
-        props.mediaRef.muted = false;
+        audioRef.currentTime = 0;
+        audioRef.play();
+        audioRef.muted = false;
 
         console.log('audio file obtained. Updating <audio />')
       });
@@ -63,38 +63,18 @@ function AudioVisualizer(props: AudioVisualizerProps) {
 
   createEffect(() => {
     // console.logTime('adjusting progress state: ', props.playbackState.progress_ms ? props.playbackState.progress_ms / 1000 : 'player inactive')
-    if (!props.playbackState.progress_ms) return props.mediaRef.pause();
+    if (!props.playbackState.progress_ms) return audioRef.pause();
 
-    props.mediaRef.currentTime = props.playbackState.progress_ms / 1000;
-    if (props.playbackState.isPlaying) props.mediaRef.play();
-    else props.mediaRef.pause();
+    audioRef.currentTime = props.playbackState.progress_ms / 1000;
+    if (props.playbackState.isPlaying) audioRef.play();
+    else audioRef.pause();
   })
 
 
   return <>
-    {/* <div style={{
-      position: 'fixed',
-      display: 'flex',
-      height: '25vh',
-    }}>
-      <For each={colors()}>{(color) =>
-        <div style={{ "background-color": color.swatch?.hex }}>
-          <span>{`${color.name}  ${color.swatch?.hex}`}</span>
-        </div>
-      }
-      </For>
-      <div style={{ "background-color": dominantColor() }}>
-        essa é a cor dominante
-      </div>
-      <For each={colors2()}>{(color) =>
-        <div style={{ "background-color": color }}>
-          <span>{color}</span>
-        </div>
-      }
-      </For>
-    </div> */}
-    <AudioBarsAnimation mediaRef={props.mediaRef} accentColor={accentColor()} />
-  </>;
+    <audio ref={audioRef} hidden muted />
+    <AudioBarsAnimation mediaRef={audioRef} accentColor={accentColor()} />
+  </>
 }
 
 export default AudioVisualizer;
