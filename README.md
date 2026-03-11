@@ -81,9 +81,10 @@ Most modern browsers require a initial user interaction to access audio nodes, t
  ## TODO:
   - [ ] fixed resolution: pick a single canvas resolution, thus solving the problem of editing the layout in different screens with different resolutions)
   - [x] Add a friendly way to "logout" from connected spotify account
-  - Styling:
+  - [ ] Styling:
     - [ ] add background options (instead of only black)
     - [x] make soundwaves animation optional
     - [ ] add progress bar
- - [ ] Migrate architecture to `solid-start` fullstack framework, having server and client more integrated
- - [ ] Migrate server to [SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB)
+ - [ ] Migrate architecture, having server and client more integrated and performant
+   - [ ] Migrate state logic and realtime logic server to [SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB)
+   - [ ] Migrate to `solid-start` fullstack framework for UI and auth management
