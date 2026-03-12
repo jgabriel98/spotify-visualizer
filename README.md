@@ -14,10 +14,7 @@ A Web Application to visualize the spotify currently playing track on a projecto
  - Synched realtime UI layout editing;
  - Dragabble, rotatable and resizable UI components;
 
-
-<video>
-   <source src="https://github.com/user-attachments/assets/5846f073-9f94-40ef-85a3-ab2fef349be2" />
-</video>
+<video src="https://github.com/user-attachments/assets/5846f073-9f94-40ef-85a3-ab2fef349be2" /></video>
 
 
 
