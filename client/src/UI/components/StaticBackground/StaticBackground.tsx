@@ -1,5 +1,5 @@
 import Vibrant from 'node-vibrant';
-import { createComputed, createEffect, createSignal } from 'solid-js';
+import { createComputed, createSignal } from 'solid-js';
 import type { CurrentlyPlayingTrack } from '~/services/types/spotify-api.interface';
 
 interface TrackVisualizerProps {

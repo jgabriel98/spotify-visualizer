@@ -6,6 +6,31 @@
   margin: 0;
 }
 
+.checkerboard-conic {
+  --square-size: 60px;
+  background: conic-gradient(
+    #fff 90deg, 
+    #ccc 90deg 180deg, 
+    #fff 180deg 270deg, 
+    #ccc 270deg
+  );
+  background-size: var(--square-size) var(--square-size);
+  background-repeat: repeat;
+}
+
 div {
   display: flex;
+}
+
+/* For the whole document */
+html {
+  /* Hide scrollbar for Firefox */
+  scrollbar-width: none;
+  /* Hide scrollbar for IE and Edge */
+  -ms-overflow-style: none;
+}
+
+/* For Chrome, Safari, Opera, and other WebKit browsers */
+::-webkit-scrollbar {
+  display: none;
 }

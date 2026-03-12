@@ -12,6 +12,7 @@ import { Server } from "socket.io";
 import routes from './routes';
 import registerStateHandlers from './sockets/persisted-state';
 import registerSpotifyAuthHandlers from './sockets/qrcode-auth';
+import registerClientSpecsHandlers from './sockets/clients-specs';
 
 const isDevMode = process.env.NODE_ENV === "development"
 const __clientdir = isDevMode
@@ -33,14 +34,15 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
   const clientIP = socket.handshake.address;
-  console.log(chalk.greenBright('user connected: '), chalk.gray(clientIP, socket.id));
+  console.log(chalk.greenBright('client connected: '), chalk.gray(clientIP, socket.id));
 
   socket.on('disconnect', () => {
-    console.log(chalk.green.dim('user disconnected: '), chalk.gray(clientIP, socket.id));
+    console.log(chalk.green.dim('client disconnected: '), chalk.gray(clientIP, socket.id));
   });
 
   registerStateHandlers(socket);
   registerSpotifyAuthHandlers(io, socket);
+  registerClientSpecsHandlers(io, socket);
 });
 
 app.use(bodyParser.json())

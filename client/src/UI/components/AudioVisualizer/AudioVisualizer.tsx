@@ -1,7 +1,7 @@
 import Vibrant from 'node-vibrant';
 import { Swatch } from 'node-vibrant/lib/color';
 import { createEffect, createSignal } from 'solid-js';
-import { getTrackStream } from '~/services/track-audio-api';
+import { getTrackStream, preFetchTrackStream } from '~/services/track-audio-api';
 import { CurrentlyPlayingTrack } from '~/services/types/spotify-api.interface';
 import AudioBarsAnimation from './AudioBarsAnimation';
 
@@ -13,6 +13,7 @@ export type PlaybackState = {
 }
 
 interface AudioVisualizerProps {
+  trackQueue: TrackObject[];
   playingTrack: CurrentlyPlayingTrack | null;
   playbackState: PlaybackState;
 }
@@ -28,6 +29,10 @@ const makeRedish = (color: Swatch) => {
 function AudioVisualizer(props: AudioVisualizerProps) { 
   let audioRef: HTMLAudioElement = undefined!;
   const [accentColor, setAccentColor] = createSignal<string | string[]>();
+
+  createEffect(() => {
+    preFetchTrackStream(props.trackQueue);
+  })
 
   createEffect((prevTrackId) => {
     if (!props.playingTrack) return null;
