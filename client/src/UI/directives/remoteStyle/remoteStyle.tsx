@@ -1,4 +1,4 @@
-import { Accessor, createEffect } from "solid-js";
+import { Accessor, createComputed, createRenderEffect, onMount } from "solid-js";
 import createRemoteSignal from "~/lib/remote-signal";
 
 declare module "solid-js" {
@@ -20,12 +20,18 @@ export default function remoteStyle(stylableRef: HTMLDivElement, options?: Acces
   const remoteKey = options?.()?.key ?? stylableRef.id
   if (!remoteKey) return console.warn("remoteStyle requires either key option or the element to have id set")
 
-  const [style, setStyle] = createRemoteSignal<string>(
+  const [style, setStyle, connected] = createRemoteSignal<string>(
     `${remoteKey}-remote_style`,
     initialStyle
   );
 
-  createEffect(() => {
+  onMount(() => stylableRef.style.visibility = 'hidden');
+
+  createRenderEffect(() => {
+    if (connected()) stylableRef.style.visibility = '';
+  })
+
+  createComputed(() => {
     const newStyle = style();
     if (stylableRef.style.cssText !== newStyle)
       stylableRef.style.cssText = newStyle;

@@ -1,14 +1,12 @@
 import { useNavigate } from "@solidjs/router";
 import QRCode from 'qrcode';
-import { io, Socket } from "socket.io-client";
-import { createComputed, createEffect, createSignal, onCleanup, onMount } from "solid-js";
+import { createComputed, createEffect, createSignal, onMount } from "solid-js";
 import { getStoredAuthToken, handleNewSpotifyAuthorizationCode } from "~/lib/spotify-auth";
 import { buildRequestUserAuthorizationURL } from "~/lib/spotify-auth/service-api";
 import { getUrlSearchParams } from "~/utils/fetch";
 import './Auth.css';
+import { webSocket } from "~/lib/websocket";
 
-const wsEndpoint = `${location.protocol}//${location.hostname}:${import.meta.env.VITE_SERVER_PORT}`;
-const webSocket: Socket<ServerToClientEvents, ClientToServerEvents> = io(wsEndpoint, { autoConnect: false });
 
 export function AuthPage() {
   const params = getUrlSearchParams(['code', 'state']);
@@ -23,7 +21,6 @@ export function AuthPage() {
   const accessToken = getStoredAuthToken();
   if (accessToken) navigate('/', { replace: true });
   onMount(() => {
-    webSocket.connect();
     buildRequestUserAuthorizationURL().then(url => {
       const state = url.searchParams.get('state');
       setSpotifyAuthState(state!);
@@ -53,8 +50,6 @@ export function AuthPage() {
     navigate('/', { replace: true });
   })
 
-  onCleanup(() => webSocket.disconnect());
-
   return <div class="QRCodeContainer">
     Scan the QR code to authenticate your Spotify account
 
@@ -68,7 +63,6 @@ export function AuthPage() {
 export function AuthCallbackPage() {
   const { code, state } = getUrlSearchParams(['code', 'state']) as NonNullable<{ code: string, state: string }>;
   const [countDown, setCountDown] = createSignal(5000);
-  onMount(() => webSocket.connect())
 
   webSocket.once('connect', async () => {
     const { status, message } = await webSocket.emitWithAck('qrCodeAuth:externalAuthenticated', state, code);
@@ -83,8 +77,6 @@ export function AuthCallbackPage() {
   createEffect(() => {
     if (countDown() <= 0) window.close();
   })
-  
-  onCleanup(() => webSocket.disconnect());
 
   return <>
     <div>All good! you can close this tab now</div>

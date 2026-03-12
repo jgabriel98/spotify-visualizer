@@ -1,13 +1,11 @@
-import { io } from "socket.io-client";
-import { createComputed, createSignal, Signal } from "solid-js";
+import { type Accessor, createComputed, createSignal, onCleanup, type Signal } from "solid-js";
 import { leadingAndTrailing, throttle } from "@solid-primitives/scheduled";
+import { webSocket } from "./websocket";
 
-const wsEndpoint = new URL(`${window.location.protocol}//${location.hostname}`);
-wsEndpoint.port = import.meta.env.VITE_SERVER_PORT ?? '';
-const webSocket = io(wsEndpoint.toString(), { autoConnect: true, closeOnBeforeunload: true });
+type RemoteSignal<T> = [Signal<T>[0], Signal<T>[1], Accessor<boolean>]
 
-export default function createRemoteSignal<T>(key: string, fallbackValue: T): Signal<T>;
-export default function createRemoteSignal<T>(key: string): Signal<T | undefined>;
+export default function createRemoteSignal<T>(key: string, fallbackValue: T): RemoteSignal<T>;
+export default function createRemoteSignal<T>(key: string): RemoteSignal<T | undefined>;
 
 export default function createRemoteSignal<T>(key: string, fallbackValue?: T) {
 
@@ -31,7 +29,7 @@ export default function createRemoteSignal<T>(key: string, fallbackValue?: T) {
     setJoinedStateRoom(true);
   });
 
-  const throttledEmit = leadingAndTrailing(throttle, (msg) => webSocket.emit('setState', msg), 25);
+  const throttledEmit = leadingAndTrailing(throttle, (msg: {key: string, value: typeof fallbackValue}) => webSocket.emit('setState', msg), 25);
 
   createComputed(() => {
     const _value = value();
@@ -44,8 +42,10 @@ export default function createRemoteSignal<T>(key: string, fallbackValue?: T) {
 
   // on server message emit
   webSocket.on(`setState-${key}`, (msg) => {
-    setValueWithSource(msg, 'external');
+    setValueWithSource(msg as any, 'external');
   });
+
+  onCleanup(() => webSocket.off(`setState-${key}`));
 
   // @ts-ignore
   const setValue: typeof _setValue = (v) => {
@@ -54,6 +54,7 @@ export default function createRemoteSignal<T>(key: string, fallbackValue?: T) {
 
   return [
     value,
-    setValue
+    setValue,
+    joinedStateRoom
   ] as const;
 };
