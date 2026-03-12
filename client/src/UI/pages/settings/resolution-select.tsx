@@ -1,6 +1,6 @@
+import { createComputed, createEffect, createResource, createSignal, Show, Suspense } from "solid-js";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/solid-ui/components/select";
 import { type Settings, useSettings } from "./context";
-import { createComputed, createEffect, createMemo, createResource, createSignal, onMount, Show, Suspense } from "solid-js";
 
 
 type DeviceResolutionOptions = {
