@@ -4,8 +4,6 @@ import { defineConfig } from 'vite';
 import { comlink } from "vite-plugin-comlink";
 import solid from 'vite-plugin-solid';
 
-
-
 export default defineConfig(({mode}) => {
   return {
     plugins: [
