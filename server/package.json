@@ -4,6 +4,9 @@
   "description": "spotify visualizer server",
   "main": "src/index.ts",
   "clientPath": "../client",
+  "nodemonConfig": {
+    "watch": ["src"]
+  },
   "scripts": {
     "dev:client": "cd ../client && NODE_ENV=development npm run build:watch",
     "dev:server": "NODE_ENV=development nodemon ./src/index.ts",
