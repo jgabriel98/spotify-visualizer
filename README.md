@@ -66,12 +66,11 @@ cd server
 npm run dev
 ```
 
-open https://localhost:3000/
+open `https://localhost:3000/` or `https://localhost:3000/settings`
 
 ## FAQ
 > I want to change the authenticated spotify account
-
-You'll need to clear the browser `localstorage`
+Logout on `https://localhost:3000/settings`, and you'll be redirected to authenticate again
 
 > I've openned the website, but the sound bars visualizer wont appear
 
@@ -81,9 +80,11 @@ Most modern browsers require a initial user interaction to access audio nodes, t
 
  ## TODO:
   - [ ] fixed resolution: pick a single canvas resolution, thus solving the problem of editing the layout in different screens with different resolutions)
-  - [ ] Add a friendly way to "logout" from connected spotify account
-  - Styling:
+  - [x] Add a friendly way to "logout" from connected spotify account
+  - [ ] Styling:
     - [ ] add background options (instead of only black)
-    - [ ] make soundwaves animation optional
+    - [x] make soundwaves animation optional
     - [ ] add progress bar
- - Migrate architecture to `solid-start` fullstack framework, having server and client more integrated
+ - [ ] Migrate architecture, having server and client more integrated and performant
+   - [ ] Migrate state logic and realtime logic server to [SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB)
+   - [ ] Migrate to `solid-start` fullstack framework for UI and auth management
