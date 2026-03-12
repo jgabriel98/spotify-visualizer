@@ -18,6 +18,7 @@ type PersistedOptions = {
 
 type Position = NonNullable<DragOptions['position']>;
 
+/** @deprecated */
 export default function neoDraggable(draggableRef: HTMLDivElement, options: Accessor<PersistedOptions>) {
   const remoteKey = options()?.key ?? draggableRef.id
   if (!remoteKey) throw new Error("remoteStyle requires either key option or the element to have id set")
