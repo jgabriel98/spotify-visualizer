@@ -79,12 +79,14 @@ Most modern browsers require a initial user interaction to access audio nodes, t
  - press f5 and quicly click anywhere on the website
 
  ## TODO:
-  - [ ] fixed resolution: pick a single canvas resolution, thus solving the problem of editing the layout in different screens with different resolutions)
-  - [x] Add a friendly way to "logout" from connected spotify account
+  - [x] fixed resolution: pick a single canvas resolution, thus solving the problem of editing the layout in different screens with different resolutions
+  - [ ] Authentication quality of life
+    - [ ] refresh QR code every 45 seconds, allowing for a new attempt in case of broken tokens during auth process
+    - [ ] Add link below QR code
+    - [x] Add a friendly way to "logout" from connected spotify account
   - [ ] Styling:
-    - [ ] add background options (instead of only black)
-    - [x] make soundwaves animation optional
-    - [ ] add progress bar
+    - [x] Allow to pick background between soundwaves and static album color
+    - [ ] add playback progress bar
  - [ ] Migrate architecture, having server and client more integrated and performant
    - [ ] Migrate state logic and realtime logic server to [SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB)
    - [ ] Migrate to `solid-start` fullstack framework for UI and auth management
